@@ -1,0 +1,6 @@
+# Ignore project-generated settings
+target
+.classpath
+.checkstyle
+.project
+.settings

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:jee="http://www.springframework.org/schema/jee"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.2.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+    http://www.springframework.org/schema/jee
+    http://www.springframework.org/schema/jee/spring-jee.xsd">
+
+  <import resource="classpath:/sdkServiceRestConfiguration.xml"/>
+
+  <context:property-placeholder location="classpath:/VirtualTutoringSessions.properties"
+    ignore-unresolvable="true"/>
+  <context:component-scan base-package="org.assistments.vts"/>
+  
+  <tx:annotation-driven transaction-manager="vtsTXManager"/>
+  <bean id="vtsTXManager"
+    class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="vtsJNDI"/>
+  </bean>
+  <jee:jndi-lookup id="vtsJNDI"
+    jndi-name="jdbc/ahaim_sandbox"
+    expected-type="javax.sql.DataSource"/>
+  <bean id="vtsDataSource"
+    class="org.assistments.service.dao.base.impl.SdkDataSourceWrapperImpl">
+    <property name="dataSource" ref="vtsJNDI"/>
+    <property name="dbNickname" value="VTS"/>
+  </bean>
+
+  <bean id="partnerCredentials"
+    class="org.assistments.service.security.authentication.core.PartnerCredentials">
+    <property name="partnerRef" value="VTS"/>
+    <property name="partnerRefDependencies" value="CAS"/>
+    <property name="partnerType" value="DAEMON_SERVICE"/>
+
+    <property name="contact" value="ASSISTments Team"/>
+    <property name="description" value="VirtualTutoringSessions"/>
+    <property name="email" value="assistments-coreDev@wpi.edu"/>
+    <property name="bsu" value="VTSadmin"/>
+    <property name="bsupw" value="OWKTPC"/>
+  </bean>
+  
+  <mvc:annotation-driven />
+  
+</beans>
